@@ -1,41 +1,31 @@
+// src/pages/ProjectDetails.jsx
+
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import projects from "../data/projects";
-import SocialLinks from "../components/SocialLinks";
 
 export default function ProjectDetails() {
   const { slug } = useParams();
 
-  const projectIndex = projects.findIndex((item) => item.slug === slug);
-  const project = projects[projectIndex];
+  const project = useMemo(
+    () => projects.find((item) => item.slug === slug),
+    [slug]
+  );
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [activeImage, setActiveImage] = useState(0);
-  const [showShare, setShowShare] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  /*
-   * ============================================================
-   * LIGHTBOX KEYBOARD CONTROLS
-   * ============================================================
-   */
   useEffect(() => {
-    if (!lightboxOpen || !project?.gallery?.length) return;
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [slug]);
 
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setLightboxOpen(false);
-      }
-
-      if (event.key === "ArrowRight") {
-        setActiveImage((current) =>
-          current === project.gallery.length - 1 ? 0 : current + 1,
-        );
-      }
-
-      if (event.key === "ArrowLeft") {
-        setActiveImage((current) =>
-          current === 0 ? project.gallery.length - 1 : current - 1,
-        );
+        setSelectedImage(null);
       }
     };
 
@@ -44,1021 +34,1024 @@ export default function ProjectDetails() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [lightboxOpen, project]);
+  }, []);
 
-  /*
-   * ============================================================
-   * LOCK PAGE SCROLL WHEN LIGHTBOX IS OPEN
-   * ============================================================
-   */
   useEffect(() => {
-    if (lightboxOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = selectedImage ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
     };
-  }, [lightboxOpen]);
+  }, [selectedImage]);
 
-  /*
-   * ============================================================
-   * RELATED PROJECTS
-   * ============================================================
-   */
-  const relatedProjects = useMemo(() => {
-    if (!project) return [];
-
-    const sameCategory = projects.filter(
-      (item) =>
-        item.slug !== project.slug && item.category === project.category,
-    );
-
-    const remaining = projects.filter(
-      (item) =>
-        item.slug !== project.slug && item.category !== project.category,
-    );
-
-    return [...sameCategory, ...remaining].slice(0, 3);
-  }, [project]);
-
-  /*
-   * ============================================================
-   * PROJECT NOT FOUND
-   * ============================================================
-   */
   if (!project) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 pt-24 text-white">
-        <div className="max-w-xl text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-blue-400">
-            404
+      <main className="min-h-screen bg-white px-4 pb-24 pt-40 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+            Project not found
           </p>
 
-          <h1 className="mt-4 text-4xl font-black sm:text-6xl">
-            Project not found.
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
+            We couldn't find that project.
           </h1>
 
-          <p className="mt-5 leading-8 text-slate-400">
-            The project you're looking for doesn't exist or may have been
-            moved.
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-slate-600">
+            The project may have been moved, renamed, or the link may be
+            incorrect.
           </p>
 
           <Link
             to="/projects"
-            className="mt-8 inline-flex rounded-xl bg-white px-6 py-3 font-bold text-slate-950 transition hover:bg-slate-200"
+            className="mt-8 inline-flex rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-blue-600"
           >
-            ← Back to Projects
+            Back to Projects
           </Link>
         </div>
       </main>
     );
   }
 
-  /*
-   * ============================================================
-   * NAVIGATION
-   * ============================================================
-   */
-  const previousProject =
-    projects[(projectIndex - 1 + projects.length) % projects.length];
+  const gallery = (project.gallery || [])
+    .map((item) => (typeof item === "string" ? { image: item } : item))
+    .filter((item) => item?.image);
+  const technologies = project.technologies || [];
+  const specifications = project.specifications || [];
+  const results = project.results || [];
+  const timeline = project.timeline || [];
+  const tags = project.tags || [];
 
-  const nextProject = projects[(projectIndex + 1) % projects.length];
-
-  /*
-   * ============================================================
-   * WHATSAPP MESSAGE
-   * ============================================================
-   */
-  const whatsappMessage = encodeURIComponent(
-    `Hello Harry Innovative Technologies, I would like to discuss a project similar to "${project.title}".`,
+  const relatedProjects = projects.filter(
+    (item) =>
+      item.slug !== project.slug &&
+      (project.relatedProjects || []).includes(item.slug)
   );
 
-  /*
-   * ============================================================
-   * SHARE
-   * ============================================================
-   */
-  const shareUrl = window.location.href;
+  const currentIndex = projects.findIndex(
+    (item) => item.slug === project.slug
+  );
+
+  const previousProject =
+    currentIndex > 0 ? projects[currentIndex - 1] : null;
+
+  const nextProject =
+    currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
+
+  const whatsappMessage = encodeURIComponent(
+    `Hello Harry Innovative Technologies, I'm interested in a project similar to "${project.title}". I would like to discuss the details.`
+  );
+
+  const shareUrl =
+    typeof window !== "undefined" ? window.location.href : "";
 
   const shareOnWhatsApp = () => {
-    const message = encodeURIComponent(`${project.shareText}\n\n${shareUrl}`);
-
     window.open(
-      `https://wa.me/?text=${message}`,
+      `https://wa.me/2349066218520?text=${encodeURIComponent(
+        `Check out this project by Harry Innovative Technologies:\n\n${project.title}\n${shareUrl}`
+      )}`,
       "_blank",
-      "noopener,noreferrer",
+      "noopener,noreferrer"
     );
   };
 
   const shareOnFacebook = () => {
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareUrl,
+        shareUrl
       )}`,
       "_blank",
-      "noopener,noreferrer",
+      "noopener,noreferrer"
     );
   };
 
-  const copyProjectLink = async () => {
+  const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      alert("Project link copied!");
+      alert("Project link copied.");
     } catch {
       alert("Unable to copy the link.");
     }
   };
 
-  /*
-   * ============================================================
-   * HERO
-   * ============================================================
-   */
   return (
-    <main className="bg-white text-slate-950">
-      {/* ======================================================
-          HERO
-      ======================================================= */}
-      <section className="relative overflow-hidden bg-slate-950 pt-28 text-white">
-        <div className="absolute inset-0">
-          {/* Replace this stock image with your real project image. */}
-          <img
-            src={project.image}
-            alt=""
-            className="h-full w-full object-cover opacity-30"
-          />
+    <>
+      <main className="bg-white text-slate-950">
+        {/* ======================================================
+            HERO
+        ======================================================= */}
+        <section className="relative overflow-hidden bg-slate-950 pt-32 text-white sm:pt-36">
+          <div className="absolute inset-0">
+            <img
+              src={project.heroImage || project.image || gallery[0]?.image}
+              alt={project.title}
+              className="h-full w-full object-cover opacity-35"
+            />
 
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/40" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-          <Link
-            to="/projects"
-            className="inline-flex items-center gap-2 text-sm font-bold text-slate-300 transition hover:text-white"
-          >
-            ← Back to Projects
-          </Link>
-
-          <div className="mt-12 max-w-5xl">
-            <div className="flex flex-wrap gap-3">
-              <span className="rounded-full bg-green-500/15 px-4 py-2 text-xs font-bold uppercase tracking-wider text-green-400 ring-1 ring-green-400/20">
-                {project.category}
-              </span>
-
-              <span className="rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-slate-300">
-                {project.status}
-              </span>
-            </div>
-
-            <h1 className="mt-6 text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl lg:text-8xl">
-              {project.title}
-            </h1>
-
-            <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300">
-              {project.description}
-            </p>
-
-            <div className="mt-9 flex flex-wrap gap-x-7 gap-y-3 text-sm font-semibold text-slate-300">
-              <span>{project.year}</span>
-              <span>•</span>
-              <span>{project.location}</span>
-              <span>•</span>
-              <span>{project.client}</span>
-            </div>
-
-            {/* SHARE */}
-            <div className="relative mt-9">
-              <button
-                type="button"
-                onClick={() => setShowShare(!showShare)}
-                className="rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15"
-              >
-                ↗ Share Project
-              </button>
-
-              {showShare && (
-                <div className="absolute left-0 top-14 z-20 flex min-w-[210px] flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900 p-2 shadow-2xl">
-                  <button
-                    type="button"
-                    onClick={shareOnWhatsApp}
-                    className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-white hover:bg-white/10"
-                  >
-                    Share on WhatsApp
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={shareOnFacebook}
-                    className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-white hover:bg-white/10"
-                  >
-                    Share on Facebook
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={copyProjectLink}
-                    className="rounded-xl px-4 py-3 text-left text-sm font-semibold text-white hover:bg-white/10"
-                  >
-                    Copy Project Link
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ======================================================
-          GALLERY
-          Featured image + compact horizontal scrolling gallery
-      ======================================================= */}
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-                Project Gallery
-              </p>
-
-              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-                See the work.
-              </h2>
-            </div>
-
-            <p className="text-sm font-semibold text-slate-500">
-              {project.gallery.length} photos
-            </p>
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/40" />
           </div>
 
-          {/* FEATURED IMAGE */}
-          {project.gallery.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                setActiveImage(0);
-                setLightboxOpen(true);
-              }}
-              className="group relative mt-8 block aspect-[16/8] w-full overflow-hidden rounded-3xl bg-slate-100 text-left"
-            >
-              {/* Replace this stock image with your real project image. */}
-              <img
-                src={project.gallery[0].image}
-                alt={project.gallery[0].caption}
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white sm:bottom-7 sm:left-7 sm:right-7">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                    Featured Project Image
-                  </p>
-
-                  <p className="mt-1 text-lg font-black sm:text-xl">
-                    {project.gallery[0].caption}
-                  </p>
-                </div>
-
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-lg text-slate-950 shadow-xl transition duration-300 group-hover:scale-110">
-                  ↗
-                </span>
-              </div>
-            </button>
-          )}
-
-          {/* SCROLLABLE PHOTO STRIP */}
-          {project.gallery.length > 1 && (
-            <div className="relative mt-5">
-              <div
-                className="flex gap-4 overflow-x-auto pb-4"
-                style={{
-                  scrollbarWidth: "thin",
-                  WebkitOverflowScrolling: "touch",
-                }}
+          <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+            <div className="max-w-4xl">
+              <Link
+                to="/projects"
+                className="inline-flex items-center gap-2 text-sm font-bold text-slate-300 transition hover:text-white"
               >
-                {project.gallery.slice(1).map((item, index) => {
-                  const actualIndex = index + 1;
+                ← Back to Projects
+              </Link>
 
-                  return (
-                    <button
-                      key={`${item.image}-${actualIndex}`}
-                      type="button"
-                      onClick={() => {
-                        setActiveImage(actualIndex);
-                        setLightboxOpen(true);
-                      }}
-                      className="group relative w-[190px] shrink-0 overflow-hidden rounded-2xl bg-slate-100 text-left sm:w-[230px] lg:w-[260px]"
-                    >
-                      <div className="aspect-[4/3] overflow-hidden">
-                        {/* Replace this stock image with your real project image. */}
-                        <img
-                          src={item.image}
-                          alt={item.caption}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        />
-                      </div>
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
-
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">
-                          Image {String(actualIndex + 1).padStart(2, "0")}
-                        </p>
-
-                        <p className="mt-1 line-clamp-2 text-sm font-bold text-white">
-                          {item.caption}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Scroll hint */}
-              <div className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full bg-white/90 px-4 py-2 text-xs font-bold text-slate-600 shadow-lg lg:block">
-                Scroll →
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ======================================================
-          VIDEO
-      ======================================================= */}
-      {project.video?.enabled && project.video.youtubeUrl && (
-        <section className="bg-slate-950 py-20 text-white sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-green-400">
-                Project Video
-              </p>
-
-              <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-                {project.video.title}
-              </h2>
-
-              <p className="mt-5 leading-8 text-slate-400">
-                {project.video.description}
-              </p>
-            </div>
-
-            <div className="mt-10 aspect-video overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
-              <iframe
-                src={project.video.youtubeUrl.replace(
-                  "watch?v=",
-                  "embed/",
+              <div className="mt-10 flex flex-wrap gap-3">
+                {project.category && (
+                  <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-white backdrop-blur">
+                    {project.category}
+                  </span>
                 )}
-                title={project.video.title}
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+
+                {project.year && (
+                  <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-slate-200 backdrop-blur">
+                    {project.year}
+                  </span>
+                )}
+
+                {project.status && (
+                  <span className="rounded-full border border-green-400/20 bg-green-400/10 px-4 py-2 text-xs font-bold text-green-300 backdrop-blur">
+                    {project.status}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="mt-7 max-w-4xl text-4xl font-black tracking-tight sm:text-6xl lg:text-7xl">
+                {project.title}
+              </h1>
+
+              {project.summary && (
+                <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
+                  {project.summary}
+                </p>
+              )}
+
+              <div className="mt-9 flex flex-wrap gap-3">
+                <a
+                  href={`https://wa.me/2349066218520?text=${whatsappMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl bg-green-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-green-600/20 transition hover:-translate-y-0.5 hover:bg-green-500"
+                >
+                  Discuss a Similar Project
+                </a>
+
+                <button
+                  type="button"
+                  onClick={shareOnWhatsApp}
+                  className="rounded-xl border border-white/15 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15"
+                >
+                  Share Project
+                </button>
+              </div>
             </div>
           </div>
         </section>
-      )}
 
-      {/* ======================================================
-          PROJECT OVERVIEW
-      ======================================================= */}
-      <section className="border-y border-slate-200 bg-white py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-14 lg:grid-cols-[1fr_340px]">
+        {/* ======================================================
+            PROJECT META
+        ======================================================= */}
+        <section className="border-b border-slate-200 bg-white">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-200 sm:grid-cols-4">
+            {[
+              ["Client", project.client || "Private Client"],
+              ["Location", project.location || "Nigeria"],
+              ["Duration", project.duration || "—"],
+              ["Status", project.status || "Completed"],
+            ].map(([label, value]) => (
+              <div key={label} className="px-5 py-7 sm:px-8">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
+                  {label}
+                </p>
+
+                <p className="mt-2 text-sm font-bold text-slate-900 sm:text-base">
+                  {value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================
+            GALLERY
+        ======================================================= */}
+        {gallery.length > 0 && (
+          <section className="py-16 sm:py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="relative overflow-hidden rounded-3xl bg-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setSelectedImage(gallery[0].image)}
+                  className="group block w-full cursor-zoom-in"
+                >
+                  <img
+                    src={gallery[0].image}
+                    alt={`${project.title} featured`}
+                    className="aspect-[16/8] w-full object-cover transition duration-700 group-hover:scale-[1.02]"
+                  />
+                </button>
+              </div>
+
+              {gallery.length > 1 && (
+                <div className="mt-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-bold text-slate-900">
+                      Project Gallery
+                    </p>
+
+                    <span className="hidden text-xs font-semibold text-slate-400 sm:block">
+                      Scroll →
+                    </span>
+                  </div>
+
+                  <div className="flex gap-4 overflow-x-auto pb-3">
+                    {gallery.slice(1).map((image, index) => (
+                      <button
+                        key={`${image}-${index}`}
+                        type="button"
+                        onClick={() => setSelectedImage(image.image)}
+                        className="group w-[190px] shrink-0 cursor-zoom-in overflow-hidden rounded-2xl bg-slate-100 sm:w-[230px] lg:w-[260px]"
+                      >
+                        <img
+                          src={image.image}
+                          alt={`${project.title} gallery ${index + 2}`}
+                          loading="lazy"
+                          className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+{/* ======================================================
+    PROJECT VIDEO
+======================================================= */}
+{project.video?.url && (
+  <section className="pb-20 sm:pb-24">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+          Project Video
+        </p>
+
+        <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+          See the work in action.
+        </h2>
+
+        {project.video.title && (
+          <p className="mt-3 text-slate-600">
+            {project.video.title}
+          </p>
+        )}
+      </div>
+
+      <div className="overflow-hidden rounded-3xl bg-slate-950 shadow-2xl">
+        <div className="aspect-video w-full">
+          <iframe
+            src={`https://www.youtube.com/embed/${
+              project.video.url.split("v=")[1]?.split("&")[0]
+            }`}
+            title={project.video.title || project.title}
+            className="h-full w-full"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+        {/* ======================================================
+            OVERVIEW
+        ======================================================= */}
+        <section className="border-t border-slate-200 py-20 sm:py-24">
+          <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[1.4fr_0.6fr] lg:px-8">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
                 Project Overview
               </p>
 
-              <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-                From problem to solution.
+              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
+                Engineering the right solution.
               </h2>
 
-              {/* CHALLENGE */}
-              <div className="mt-12">
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                  01 — The Challenge
+              {project.description && (
+                <p className="mt-6 text-base leading-8 text-slate-600">
+                  {project.description}
                 </p>
+              )}
 
-                <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                  {project.challenge}
-                </p>
-              </div>
+              {project.challenge && (
+                <div className="mt-10">
+                  <h3 className="text-xl font-black">The Challenge</h3>
 
-              {/* APPROACH */}
-              {project.approach && (
-                <div className="mt-12">
-                  <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                    02 — Our Approach
+                  <p className="mt-3 leading-8 text-slate-600">
+                    {project.challenge}
                   </p>
+                </div>
+              )}
 
-                  <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+              {project.approach && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-black">Our Approach</h3>
+
+                  <p className="mt-3 leading-8 text-slate-600">
                     {project.approach}
                   </p>
                 </div>
               )}
 
-              {/* SOLUTION */}
-              <div className="mt-12">
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                  03 — The Solution
-                </p>
+              {project.solution && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-black">The Solution</h3>
 
-                <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                  {project.solution}
-                </p>
-              </div>
-
-              {/* RESULT */}
-              <div className="mt-12">
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-400">
-                  04 — The Result
-                </p>
-
-                <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-600">
-                  {project.result}
-                </p>
-              </div>
+                  <p className="mt-3 leading-8 text-slate-600">
+                    {project.solution}
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* PROJECT DETAILS */}
-            <aside className="h-fit rounded-3xl bg-slate-950 p-7 text-white shadow-xl lg:sticky lg:top-28">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
+            <aside className="rounded-3xl bg-slate-950 p-7 text-white sm:p-9">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
                 Project Details
               </p>
 
               <div className="mt-7 divide-y divide-white/10">
-                <div className="py-5 first:pt-0">
-                  <p className="text-xs text-slate-500">Category</p>
-                  <p className="mt-1 font-bold">{project.category}</p>
-                </div>
+                {[
+                  ["Client", project.client || "Private Client"],
+                  ["Location", project.location || "Nigeria"],
+                  ["Year", project.year || "—"],
+                  ["Duration", project.duration || "—"],
+                  ["Status", project.status || "—"],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="flex items-start justify-between gap-5 py-4 first:pt-0 last:pb-0"
+                  >
+                    <span className="text-sm text-slate-400">{label}</span>
 
-                <div className="py-5">
-                  <p className="text-xs text-slate-500">Client</p>
-                  <p className="mt-1 font-bold">{project.client}</p>
-                </div>
-
-                <div className="py-5">
-                  <p className="text-xs text-slate-500">Location</p>
-                  <p className="mt-1 font-bold">{project.location}</p>
-                </div>
-
-                <div className="py-5">
-                  <p className="text-xs text-slate-500">Year</p>
-                  <p className="mt-1 font-bold">{project.year}</p>
-                </div>
-
-                <div className="py-5">
-                  <p className="text-xs text-slate-500">Duration</p>
-                  <p className="mt-1 font-bold">{project.duration}</p>
-                </div>
-
-                <div className="py-5">
-                  <p className="text-xs text-slate-500">Status</p>
-                  <p className="mt-1 font-bold text-green-400">
-                    {project.status}
-                  </p>
-                </div>
+                    <span className="text-right text-sm font-bold text-white">
+                      {value}
+                    </span>
+                  </div>
+                ))}
               </div>
             </aside>
           </div>
-        </div>
-      </section>
-
-      {/* ======================================================
-          TECHNOLOGIES
-      ======================================================= */}
-      {project.technologies?.length > 0 && (
-        <section className="bg-slate-50 py-20 sm:py-24">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-              Technologies & Equipment
-            </p>
-
-            <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-              What went into the solution.
-            </h2>
-
-            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {project.technologies.map((technology, index) => (
-                <div
-                  key={technology}
-                  className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-                >
-                  <span className="text-xs font-bold text-blue-600">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  <p className="mt-3 font-bold text-slate-800">
-                    {technology}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </section>
-      )}
 
-      {/* ======================================================
-          SPECIFICATIONS
-      ======================================================= */}
-      {project.specifications?.length > 0 && (
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-              Technical Specifications
-            </p>
-
-            <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-              The technical details.
-            </h2>
-
-            <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200">
-              {project.specifications.map((specification, index) => (
-                <div
-                  key={specification.label}
-                  className={`grid gap-2 px-6 py-5 sm:grid-cols-2 sm:px-8 ${
-                    index % 2 === 0 ? "bg-slate-50" : "bg-white"
-                  }`}
-                >
-                  <p className="text-sm font-semibold text-slate-500">
-                    {specification.label}
-                  </p>
-
-                  <p className="font-bold text-slate-900 sm:text-right">
-                    {specification.value}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ======================================================
-          RESULTS
-      ======================================================= */}
-      {project.results?.length > 0 && (
-        <section className="bg-slate-950 py-20 text-white sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-green-400">
-              Project Results
-            </p>
-
-            <h2 className="mt-4 max-w-3xl text-3xl font-black sm:text-5xl">
-              What the project achieved.
-            </h2>
-
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {project.results.map((result) => (
-                <div
-                  key={result.label}
-                  className="rounded-3xl border border-white/10 bg-white/5 p-7"
-                >
-                  <p className="text-4xl font-black sm:text-5xl">
-                    {result.value}
-                  </p>
-
-                  <p className="mt-3 text-sm leading-6 text-slate-400">
-                    {result.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ======================================================
-          BEFORE / AFTER
-      ======================================================= */}
-      {project.beforeAfter?.enabled && (
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-              Before & After
-            </p>
-
-            <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-              The transformation.
-            </h2>
-
-            <div className="mt-10 grid gap-6 md:grid-cols-2">
-              {/* BEFORE */}
-              <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                <div className="aspect-video overflow-hidden">
-                  {/* Replace with real BEFORE image. */}
-                  <img
-                    src={project.beforeAfter.before.image}
-                    alt="Before project"
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-
-                <div className="p-6">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Before
-                  </span>
-
-                  <h3 className="mt-2 text-2xl font-black">
-                    {project.beforeAfter.before.title}
-                  </h3>
-
-                  <p className="mt-3 leading-7 text-slate-600">
-                    {project.beforeAfter.before.description}
-                  </p>
-                </div>
-              </div>
-
-              {/* AFTER */}
-              <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-                <div className="aspect-video overflow-hidden">
-                  {/* Replace with real AFTER image. */}
-                  <img
-                    src={project.beforeAfter.after.image}
-                    alt="After project"
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-
-                <div className="p-6">
-                  <span className="text-xs font-bold uppercase tracking-wider text-green-600">
-                    After
-                  </span>
-
-                  <h3 className="mt-2 text-2xl font-black">
-                    {project.beforeAfter.after.title}
-                  </h3>
-
-                  <p className="mt-3 leading-7 text-slate-600">
-                    {project.beforeAfter.after.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ======================================================
-          TIMELINE
-      ======================================================= */}
-      {project.timeline?.length > 0 && (
-        <section className="bg-slate-50 py-20 sm:py-28">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <div className="text-center">
+        {/* ======================================================
+            TECHNOLOGIES
+        ======================================================= */}
+        {technologies.length > 0 && (
+          <section className="bg-slate-50 py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-                Project Timeline
+                Technology & Equipment
               </p>
 
-              <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-                How we built it.
+              <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                What powered the project.
               </h2>
-            </div>
 
-            <div className="relative mt-14">
-              <div className="absolute bottom-0 left-[23px] top-0 w-px bg-slate-200 sm:left-1/2 sm:-translate-x-1/2" />
-
-              <div className="space-y-10">
-                {project.timeline.map((item, index) => (
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {technologies.map((technology, index) => (
                   <div
-                    key={item.step}
-                    className={`relative grid gap-6 sm:grid-cols-2 sm:gap-14 ${
-                      index % 2 === 0 ? "" : "sm:text-right"
-                    }`}
+                    key={`${technology}-${index}`}
+                    className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                   >
-                    <div
-                      className={`pl-14 sm:pl-0 ${
-                        index % 2 === 0
-                          ? "sm:pr-14"
-                          : "sm:order-2 sm:pl-14"
-                      }`}
-                    >
-                      <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                        Step {item.step}
-                      </p>
-
-                      <h3 className="mt-2 text-2xl font-black">
-                        {item.title}
-                      </h3>
-
-                      <p className="mt-3 leading-7 text-slate-600">
-                        {item.description}
-                      </p>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-sm font-black text-blue-600">
+                      {String(index + 1).padStart(2, "0")}
                     </div>
 
-                    <div className="absolute left-0 top-0 flex h-12 w-12 items-center justify-center rounded-full border-4 border-slate-50 bg-slate-950 text-xs font-black text-white sm:left-1/2 sm:-translate-x-1/2">
-                      {item.step}
+                    <p className="mt-5 font-bold text-slate-900">
+                      {technology}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            TECHNICAL SPECIFICATIONS
+        ======================================================= */}
+        {specifications.length > 0 && (
+          <section className="py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+                  Technical Specifications
+                </p>
+
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                  Built around the requirements.
+                </h2>
+              </div>
+
+              <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200">
+                <div className="divide-y divide-slate-200">
+                  {specifications.map((specification, index) => {
+                    if (
+                      typeof specification === "string" ||
+                      typeof specification !== "object"
+                    ) {
+                      return (
+                        <div
+                          key={index}
+                          className="px-6 py-5 text-sm font-medium text-slate-700"
+                        >
+                          {specification}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div
+                        key={index}
+                        className="grid gap-2 px-6 py-5 sm:grid-cols-2"
+                      >
+                        <span className="text-sm font-bold text-slate-500">
+                          {specification.label ||
+                            specification.name ||
+                            "Specification"}
+                        </span>
+
+                        <span className="text-sm font-semibold text-slate-900 sm:text-right">
+                          {specification.value || specification.description}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            RESULTS
+        ======================================================= */}
+        {results.length > 0 && (
+          <section className="bg-slate-950 py-20 text-white sm:py-24">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-400">
+                  Project Results
+                </p>
+
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                  What the solution delivered.
+                </h2>
+              </div>
+
+              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {results.map((result, index) => (
+                  <div
+                    key={index}
+                    className="rounded-3xl border border-white/10 bg-white/[0.04] p-7"
+                  >
+                    <div className="text-3xl font-black text-blue-400">
+                      {typeof result === "object"
+                        ? result.value || result.metric || ""
+                        : "✓"}
+                    </div>
+
+                    <p className="mt-4 leading-7 text-slate-300">
+                      {typeof result === "object"
+                        ? result.label ||
+                          result.description ||
+                          result.text ||
+                          ""
+                        : result}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            BEFORE / AFTER
+        ======================================================= */}
+        {project.beforeAfter?.enabled &&
+          project.beforeAfter.before?.image &&
+          project.beforeAfter.after?.image && (
+          <section className="py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+                  Transformation
+                </p>
+
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                  Before & After
+                </h2>
+              </div>
+
+              <div className="mt-10 grid gap-6 md:grid-cols-2">
+                {[
+                  ["Before", project.beforeAfter.before],
+                  ["After", project.beforeAfter.after],
+                ].map(([label, image]) => (
+                  <div key={label}>
+                    <div className="mb-3 flex items-center justify-between">
+                      <h3 className="font-black">{label}</h3>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImage(image.image)}
+                      className="block w-full overflow-hidden rounded-3xl bg-slate-100"
+                    >
+                      <img
+                        src={image.image}
+                        alt={`${project.title} - ${label}`}
+                        loading="lazy"
+                        className="aspect-[4/3] w-full object-cover transition duration-500 hover:scale-105"
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            TIMELINE
+        ======================================================= */}
+        {timeline.length > 0 && (
+          <section className="bg-slate-50 py-20">
+            <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+              <div className="text-center">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+                  Project Process
+                </p>
+
+                <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                  From idea to execution.
+                </h2>
+              </div>
+
+              <div className="mt-12 space-y-5">
+                {timeline.map((step, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-950 text-sm font-black text-white">
+                      {index + 1}
+                    </div>
+
+                    <div>
+                      {typeof step === "object" ? (
+                        <>
+                          <h3 className="font-black text-slate-950">
+                            {step.title || step.name || `Step ${index + 1}`}
+                          </h3>
+
+                          <p className="mt-2 leading-7 text-slate-600">
+                            {step.description || step.text || ""}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="pt-1 font-semibold leading-7 text-slate-700">
+                          {step}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* ======================================================
-          TESTIMONIAL
-      ======================================================= */}
-      {project.testimonial?.enabled && (
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-              Client Feedback
-            </p>
-
-            <div className="mt-8 text-5xl text-slate-200">“</div>
-
-            <blockquote className="mt-2 text-2xl font-bold leading-10 text-slate-800 sm:text-4xl">
-              {project.testimonial.quote}
-            </blockquote>
-
-            <div className="mt-8">
-              <p className="font-black text-slate-950">
-                {project.testimonial.name}
-              </p>
-
-              <p className="mt-1 text-sm text-slate-500">
-                {project.testimonial.role}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ======================================================
-          SOCIAL MEDIA
-      ======================================================= */}
-      {Object.values(project.socialLinks || {}).some(Boolean) && (
-        <section className="border-y border-slate-200 bg-slate-50 py-14">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
-              <div className="max-w-2xl">
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-                  Follow The Work
-                </p>
-
-                <h2 className="mt-2 text-2xl font-black text-slate-950 sm:text-3xl">
-                  See project updates on social media.
-                </h2>
-
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Follow Harry Innovative Technologies for project updates,
-                  installations, technology solutions, repairs and
-                  behind-the-scenes content.
-                </p>
+        {/* ======================================================
+            TESTIMONIAL
+        ======================================================= */}
+        {project.testimonial && (
+          <section className="py-20 sm:py-24">
+            <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-3xl text-blue-600">
+                "
               </div>
 
-              {/* Same social icon component used in the Footer */}
-              <div className="shrink-0">
-                <SocialLinks
-                  links={{
-                    facebook: project.socialLinks?.facebook,
-                    instagram: project.socialLinks?.instagram,
-                    youtube: project.socialLinks?.youtube,
-                  }}
-                />
+              <blockquote className="mt-7 text-2xl font-bold leading-relaxed text-slate-900 sm:text-3xl">
+                {typeof project.testimonial === "object"
+                  ? project.testimonial.quote
+                  : project.testimonial}
+              </blockquote>
+
+              {typeof project.testimonial === "object" &&
+                project.testimonial.name && (
+                  <p className="mt-6 text-sm font-bold text-slate-500">
+                    {project.testimonial.name}
+                    {project.testimonial.role
+                      ? ` · ${project.testimonial.role}`
+                      : ""}
+                  </p>
+                )}
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            SOCIAL MEDIA
+        ======================================================= */}
+        {Object.values(project.socialLinks || {}).some(Boolean) && (
+          <section className="border-y border-slate-200 bg-slate-50 py-14">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-center">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+                    Follow The Work
+                  </p>
+
+                  <h2 className="mt-2 text-2xl font-black sm:text-3xl">
+                    See project updates on social media.
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  {/* FACEBOOK */}
+                  {project.socialLinks.facebook && (
+                    <a
+                      href={project.socialLinks.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      className="group flex items-center gap-3 rounded-xl bg-[#1877F2] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path d="M13.5 22v-8h2.75l.5-3h-3.25V9.05c0-.87.43-1.55 1.67-1.55h1.76V4.82c-.31-.04-1.38-.14-2.63-.14-2.6 0-4.38 1.59-4.38 4.5V11H7v3h2.92v8h3.58Z" />
+                      </svg>
+
+                      <span>Facebook</span>
+                    </a>
+                  )}
+
+                  {/* INSTAGRAM */}
+                  {project.socialLinks.instagram && (
+                    <a
+                      href={project.socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                    >
+                      <span
+                        className="flex h-5 w-5 items-center justify-center rounded-[6px] bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#FCAF45] text-white"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          className="h-3.5 w-3.5"
+                        >
+                          <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="5"
+                            stroke="currentColor"
+                            strokeWidth="2.3"
+                          />
+
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="4"
+                            stroke="currentColor"
+                            strokeWidth="2.3"
+                          />
+
+                          <circle
+                            cx="17.5"
+                            cy="6.5"
+                            r="1.2"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </span>
+
+                      <span>Instagram</span>
+                    </a>
+                  )}
+
+                  {/* YOUTUBE */}
+                  {project.socialLinks.youtube && (
+                    <a
+                      href={project.socialLinks.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube"
+                      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                    >
+                      <span className="text-[#FF0000]" aria-hidden="true">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-5 w-5"
+                        >
+                          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.2 3.5-6.2 3.5Z" />
+                        </svg>
+                      </span>
+
+                      <span>YouTube</span>
+                    </a>
+                  )}
+
+                  {/* TIKTOK */}
+                  {project.socialLinks.tiktok && (
+                    <a
+                      href={project.socialLinks.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="TikTok"
+                      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-lg"
+                    >
+                      <span className="relative flex h-5 w-5 items-center justify-center">
+                        {/* TikTok cyan shadow */}
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="absolute -left-[1px] top-[1px] h-5 w-5 text-[#25F4EE]"
+                          aria-hidden="true"
+                        >
+                          <path d="M19.6 8.2a5.8 5.8 0 0 1-3.7-1.3v7.3a5.8 5.8 0 1 1-5.8-5.8c.4 0 .8 0 1.2.1v3a2.8 2.8 0 1 0 1.6 2.6V2h3a5.8 5.8 0 0 0 3.7 3.7v2.5Z" />
+                        </svg>
+
+                        {/* TikTok red shadow */}
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="absolute left-[1px] top-0 h-5 w-5 text-[#FE2C55]"
+                          aria-hidden="true"
+                        >
+                          <path d="M19.6 8.2a5.8 5.8 0 0 1-3.7-1.3v7.3a5.8 5.8 0 1 1-5.8-5.8c.4 0 .8 0 1.2.1v3a2.8 2.8 0 1 0 1.6 2.6V2h3a5.8 5.8 0 0 0 3.7 3.7v2.5Z" />
+                        </svg>
+
+                        {/* TikTok main icon */}
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="relative h-5 w-5 text-slate-950"
+                          aria-hidden="true"
+                        >
+                          <path d="M19.6 8.2a5.8 5.8 0 0 1-3.7-1.3v7.3a5.8 5.8 0 1 1-5.8-5.8c.4 0 .8 0 1.2.1v3a2.8 2.8 0 1 0 1.6 2.6V2h3a5.8 5.8 0 0 0 3.7 3.7v2.5Z" />
+                        </svg>
+                      </span>
+
+                      <span>TikTok</span>
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* ======================================================
-          TAGS
-      ======================================================= */}
-      {project.tags?.length > 0 && (
-        <section className="py-10">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 sm:px-6 lg:px-8">
-            <span className="mr-2 text-sm font-bold text-slate-400">
-              Tags
-            </span>
+        {/* ======================================================
+            TAGS
+        ======================================================= */}
+        {tags.length > 0 && (
+          <section className="py-12">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-slate-100 px-4 py-2 text-xs font-bold text-slate-600"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-slate-100 px-4 py-2 text-xs font-bold text-slate-600"
-              >
-                #{tag.replace(/\s+/g, "")}
-              </span>
-            ))}
-          </div>
-        </section>
-      )}
+        {/* ======================================================
+            RELATED PROJECTS
+        ======================================================= */}
+        {relatedProjects.length > 0 && (
+          <section className="bg-slate-50 py-20">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+                    More Work
+                  </p>
 
-      {/* ======================================================
-          RELATED PROJECTS
-      ======================================================= */}
-      {relatedProjects.length > 0 && (
-        <section className="border-t border-slate-200 py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
-              More Work
+                  <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+                    Related projects.
+                  </h2>
+                </div>
+
+                <Link
+                  to="/projects"
+                  className="text-sm font-bold text-blue-600 hover:text-blue-700"
+                >
+                  View all projects →
+                </Link>
+              </div>
+
+              <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {relatedProjects.map((relatedProject) => (
+                  <Link
+                    key={relatedProject.slug}
+                    to={`/projects/${relatedProject.slug}`}
+                    className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  >
+                    <div className="overflow-hidden">
+                      <img
+                        src={
+                          relatedProject.heroImage ||
+                          relatedProject.image ||
+                          relatedProject.gallery?.[0]?.image ||
+                          relatedProject.gallery?.[0]
+                        }
+                        alt={relatedProject.title}
+                        loading="lazy"
+                        className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="p-6">
+                      <p className="text-xs font-bold uppercase tracking-[0.15em] text-blue-600">
+                        {relatedProject.category}
+                      </p>
+
+                      <h3 className="mt-2 text-xl font-black">
+                        {relatedProject.title}
+                      </h3>
+
+                      <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600">
+                        {relatedProject.summary}
+                      </p>
+
+                      <span className="mt-5 inline-block text-sm font-bold text-slate-950">
+                        View project →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            PREVIOUS / NEXT
+        ======================================================= */}
+        {(previousProject || nextProject) && (
+          <section className="border-t border-slate-200 py-10">
+            <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 px-4 sm:flex-row sm:px-6 lg:px-8">
+              {previousProject ? (
+                <Link
+                  to={`/projects/${previousProject.slug}`}
+                  className="group rounded-2xl border border-slate-200 p-5 transition hover:border-blue-200 hover:shadow-md"
+                >
+                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
+                    Previous Project
+                  </p>
+
+                  <p className="mt-2 font-black text-slate-900 transition group-hover:text-blue-600">
+                    ← {previousProject.title}
+                  </p>
+                </Link>
+              ) : (
+                <div />
+              )}
+
+              {nextProject ? (
+                <Link
+                  to={`/projects/${nextProject.slug}`}
+                  className="group rounded-2xl border border-slate-200 p-5 text-left transition hover:border-blue-200 hover:shadow-md sm:text-right"
+                >
+                  <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
+                    Next Project
+                  </p>
+
+                  <p className="mt-2 font-black text-slate-900 transition group-hover:text-blue-600">
+                    {nextProject.title} →
+                  </p>
+                </Link>
+              ) : (
+                <div />
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ======================================================
+            FINAL CTA
+        ======================================================= */}
+        <section className="bg-slate-950 py-20 text-white sm:py-24">
+          <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-400">
+              Have a similar challenge?
             </p>
 
-            <h2 className="mt-4 text-3xl font-black sm:text-5xl">
-              Explore related projects.
+            <h2 className="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
+              Let's build your solution.
             </h2>
 
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
-              {relatedProjects.map((item) => (
-                <Link
-                  key={item.slug}
-                  to={`/projects/${item.slug}`}
-                  className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-xl"
-                >
-                  <div className="aspect-[4/3] overflow-hidden">
-                    {/* Replace with real project image. */}
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  </div>
+            <p className="mx-auto mt-5 max-w-2xl leading-8 text-slate-300">
+              Tell us what you need and we'll help you turn the idea into a
+              practical, reliable solution.
+            </p>
 
-                  <div className="p-6">
-                    <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                      {item.category}
-                    </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <a
+                href={`https://wa.me/2349066218520?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-green-600 px-7 py-4 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-green-500"
+              >
+                Start a Conversation
+              </a>
 
-                    <h3 className="mt-2 text-2xl font-black">
-                      {item.title}
-                    </h3>
+              <Link
+                to="/contact"
+                className="rounded-xl border border-white/15 bg-white/10 px-7 py-4 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Contact Us
+              </Link>
+            </div>
 
-                    <span className="mt-5 inline-flex font-bold transition group-hover:text-blue-600">
-                      View Project →
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={shareOnWhatsApp}
+                className="rounded-lg border border-white/10 px-4 py-2 text-xs font-bold text-slate-300 transition hover:border-green-400/40 hover:text-green-400"
+              >
+                Share on WhatsApp
+              </button>
+
+              <button
+                type="button"
+                onClick={shareOnFacebook}
+                className="rounded-lg border border-white/10 px-4 py-2 text-xs font-bold text-slate-300 transition hover:border-blue-400/40 hover:text-blue-400"
+              >
+                Share on Facebook
+              </button>
+
+              <button
+                type="button"
+                onClick={copyLink}
+                className="rounded-lg border border-white/10 px-4 py-2 text-xs font-bold text-slate-300 transition hover:border-white/30 hover:text-white"
+              >
+                Copy Link
+              </button>
             </div>
           </div>
         </section>
-      )}
-
-      {/* ======================================================
-          PREVIOUS / NEXT
-      ======================================================= */}
-      <section className="border-t border-slate-200">
-        <div className="mx-auto grid max-w-7xl md:grid-cols-2">
-          <Link
-            to={`/projects/${previousProject.slug}`}
-            className="group border-b border-slate-200 p-8 transition hover:bg-slate-50 md:border-b-0 md:border-r md:p-12"
-          >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-              Previous Project
-            </p>
-
-            <h3 className="mt-3 text-2xl font-black transition group-hover:text-blue-600 sm:text-3xl">
-              {previousProject.title}
-            </h3>
-
-            <span className="mt-5 inline-flex font-bold">
-              ← View Project
-            </span>
-          </Link>
-
-          <Link
-            to={`/projects/${nextProject.slug}`}
-            className="group p-8 transition hover:bg-slate-50 md:p-12 md:text-right"
-          >
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-              Next Project
-            </p>
-
-            <h3 className="mt-3 text-2xl font-black transition group-hover:text-blue-600 sm:text-3xl">
-              {nextProject.title}
-            </h3>
-
-            <span className="mt-5 inline-flex font-bold">
-              View Project →
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      {/* ======================================================
-          FINAL CTA
-      ======================================================= */}
-      <section className="overflow-hidden bg-slate-950 py-20 text-white sm:py-28">
-        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6">
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-green-400">
-            Start Your Project
-          </p>
-
-          <h2 className="mt-5 text-4xl font-black tracking-tight sm:text-6xl">
-            Have a project
-            <span className="block text-blue-400">like this?</span>
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl leading-8 text-slate-400">
-            Tell us what you're trying to achieve and we'll help you find the
-            right technical solution.
-          </p>
-
-          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-            <a
-              href={`https://wa.me/2349066218520?text=${whatsappMessage}`}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-xl bg-green-500 px-7 py-4 font-bold text-white shadow-xl transition hover:-translate-y-1 hover:bg-green-600"
-            >
-              WhatsApp Us
-            </a>
-
-            <Link
-              to="/contact"
-              className="rounded-xl border border-white/15 bg-white/10 px-7 py-4 font-bold text-white transition hover:bg-white/15"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </section>
+      </main>
 
       {/* ======================================================
           IMAGE LIGHTBOX
       ======================================================= */}
-      {lightboxOpen && (
+      {selectedImage && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
-          onClick={() => setLightboxOpen(false)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/95 p-4"
+          onClick={() => setSelectedImage(null)}
         >
-          {/* CLOSE */}
           <button
             type="button"
-            aria-label="Close gallery"
-            onClick={() => setLightboxOpen(false)}
-            className="absolute right-5 top-5 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur transition hover:bg-white/20"
+            onClick={() => setSelectedImage(null)}
+            aria-label="Close image"
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur transition hover:bg-white/20"
           >
             ×
           </button>
 
-          {/* PREVIOUS */}
-          <button
-            type="button"
-            aria-label="Previous image"
-            onClick={(event) => {
-              event.stopPropagation();
-
-              setActiveImage((current) =>
-                current === 0 ? project.gallery.length - 1 : current - 1,
-              );
-            }}
-            className="absolute left-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur transition hover:bg-white/20 sm:left-8"
-          >
-            ←
-          </button>
-
-          {/* IMAGE */}
-          <div
-            className="relative flex max-h-[90vh] max-w-6xl flex-col items-center"
+          <img
+            src={selectedImage}
+            alt={project.title}
             onClick={(event) => event.stopPropagation()}
-          >
-            {/* Replace with your real project image. */}
-            <img
-              src={project.gallery[activeImage].image}
-              alt={project.gallery[activeImage].caption}
-              className="max-h-[78vh] max-w-full rounded-xl object-contain shadow-2xl"
-            />
-
-            <div className="mt-4 text-center">
-              <p className="font-bold text-white">
-                {project.gallery[activeImage].caption}
-              </p>
-
-              <p className="mt-1 text-sm text-slate-400">
-                {activeImage + 1} / {project.gallery.length}
-              </p>
-            </div>
-          </div>
-
-          {/* NEXT */}
-          <button
-            type="button"
-            aria-label="Next image"
-            onClick={(event) => {
-              event.stopPropagation();
-
-              setActiveImage((current) =>
-                current === project.gallery.length - 1 ? 0 : current + 1,
-              );
-            }}
-            className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur transition hover:bg-white/20 sm:right-8"
-          >
-            →
-          </button>
+            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain shadow-2xl"
+          />
         </div>
       )}
-    </main>
+    </>
   );
 }

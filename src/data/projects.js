@@ -29,15 +29,11 @@ const projects = [
     // Replace these with your real project photos.
     // =========================================================
     gallery: [
+      
       {
         image:
-          "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1800&q=90",
-        caption: "Solar installation overview",
-      },
-      {
-        image:
-          "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1400&q=90",
-        caption: "Solar power system",
+      "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=1800&q=90",
+
       },
       {
         image:
@@ -60,13 +56,9 @@ const projects = [
     // - Your own MP4
     // =========================================================
     video: {
-      enabled: true,
-      title: "Project Walkthrough",
-      description:
-        "A closer look at the installation and the technology behind the solution.",
-      youtubeUrl: "https://www.youtube.com/watch?v=VIDEO_ID",
+      url: "https://www.youtube.com/watch?v=khYZTmm7S5I",
+      title: "SOLAR POWER: The Ultimate Beginner's Guide / How To",
     },
-
     // =========================================================
     // PROJECT OVERVIEW
     // =========================================================
@@ -232,18 +224,15 @@ const projects = [
     // Replace with the specific project post when available.
     // =========================================================
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
-      instagram: "",
-      youtube: "",
-      tiktok: "",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
+      instagram: "https://www.instagram.com/harryinnotech/",
+      youtube: "https://www.youtube.com/@HarryInnoTech",
     },
 
     // =========================================================
     // SHARE TEXT
     // =========================================================
-    shareText:
-      "Check out this project by Harry Innovative Technologies.",
+    shareText: "Check out this project by Harry Innovative Technologies.",
 
     // =========================================================
     // ADDITIONAL PROJECT TAGS
@@ -336,8 +325,7 @@ const projects = [
     },
 
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
       instagram: "",
       youtube: "",
       tiktok: "",
@@ -427,8 +415,7 @@ const projects = [
     },
 
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
       instagram: "",
       youtube: "",
       tiktok: "",
@@ -518,8 +505,7 @@ const projects = [
     },
 
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
       instagram: "",
       youtube: "",
       tiktok: "",
@@ -609,8 +595,7 @@ const projects = [
     },
 
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
       instagram: "",
       youtube: "",
       tiktok: "",
@@ -700,8 +685,7 @@ const projects = [
     },
 
     socialLinks: {
-      facebook:
-        "https://www.facebook.com/profile.php?id=61552539832730",
+      facebook: "https://www.facebook.com/profile.php?id=61552539832730",
       instagram: "",
       youtube: "",
       tiktok: "",
