@@ -1,4 +1,6 @@
 import SocialLinks from "./SocialLinks";
+import logo from "../assets/logo.webp";
+
 export default function Footer() {
   return (
     <footer className="bg-slate-950 text-white">
@@ -7,7 +9,11 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white">
-                <span className="font-bold text-slate-950">HIT</span>
+                <img
+                  src={logo}
+                  alt="Harry Innovative Technologies Logo"
+                  className="h-full w-full object-contain"
+                />
               </div>
 
               <div>
