@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
 
-# Replace this hostname with the final production domain before launch.
-Sitemap: https://harry-innovative-technologies.vercel.app/sitemap.xml
+Sitemap: https://harryinnotech.vercel.app/sitemap.xml

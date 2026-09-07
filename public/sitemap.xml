@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Replace the hostname with the final production domain before launch. -->
-  <url><loc>https://harry-innovative-technologies.vercel.app/</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/services</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/contact</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/about</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/solar-power-installation</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/electrical-engineering</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/security-surveillance</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/digital-solutions</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/electronics-engineering</loc></url>
-  <url><loc>https://harry-innovative-technologies.vercel.app/projects/engineering-solutions</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/services</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/contact</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/about</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/solar-power-installation</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/electrical-engineering</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/security-surveillance</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/digital-solutions</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/electronics-engineering</loc></url>
+  <url><loc>https://harryinnotech.vercel.app/projects/engineering-solutions</loc></url>
 </urlset>
