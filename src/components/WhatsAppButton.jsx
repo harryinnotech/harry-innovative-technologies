@@ -1,13 +1,13 @@
-export default function WhatsAppButton() {
-  const phone = "+2349066218520";
+import { WHATSAPP_NUMBER } from "../config/storeConfig";
 
+export default function WhatsAppButton() {
   const message = encodeURIComponent(
     "Hello Harry Innovative Technologies, I would like to make an enquiry about your services."
   );
 
   return (
     <a
-      href={`https://wa.me/${phone}?text=${message}`}
+      href={`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with Harry Innovative Technologies on WhatsApp"

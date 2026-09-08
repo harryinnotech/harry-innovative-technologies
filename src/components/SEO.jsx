@@ -27,6 +27,16 @@ const pageMetadata = {
     description:
       "Learn about Harry Innovative Technologies and our practical approach to technology and engineering solutions.",
   },
+  "/store": {
+    title: "Store | Harry Innovative Technologies",
+    description:
+      "Explore website development, design, software, SEO and technology services from Harry Innovative Technologies.",
+  },
+  "/store/checkout": {
+    title: "Checkout | Harry Innovative Technologies",
+    description:
+      "Review your Harry Innovative Technologies store order and continue through WhatsApp.",
+  },
 };
 
 function setMeta(attribute, value, content) {
@@ -47,7 +57,9 @@ export default function SEO() {
   useEffect(() => {
     const basePath = pathname.startsWith("/projects/")
       ? "/projects"
-      : pathname;
+      : pathname.startsWith("/store/") && pathname !== "/store/checkout"
+        ? "/store"
+        : pathname;
     const metadata = pageMetadata[basePath] || pageMetadata["/"];
     const canonicalUrl = `${window.location.origin}${pathname}`;
 

@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.webp";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { itemCount } = useCart();
 
   const links = [
     { name: "Home", href: "/" },
     
     { name: "Services", href: "/services" },
     { name: "Projects", href: "/projects" },
+    { name: "Store", href: "/store" },
     { name: "Contact", href: "/contact" },
     { name: "About", href: "/about" },
   ];
@@ -18,8 +22,8 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-20 items-center justify-between gap-2">
           {/* LOGO + COMPANY NAME */}
-          <a
-            href="/"
+          <Link
+            to="/"
             className="flex min-w-0 items-center gap-2.5 sm:gap-3"
             onClick={() => setOpen(false)}>
             {/* Logo */}
@@ -47,18 +51,24 @@ export default function Navbar() {
   Technologies
 </p>
             </div>
-          </a>
+          </Link>
 
           {/* DESKTOP NAVIGATION */}
           <nav className="hidden items-center gap-7 md:flex">
             {links.map((link) => (
-              <a
+              <NavLink
                 key={link.name}
-                href={link.href}
-                className="relative text-sm font-semibold text-slate-600 transition duration-200 hover:text-blue-600">
+                to={link.href}
+                end={link.href === "/"}
+                className={({ isActive }) => `relative text-sm font-semibold transition duration-200 hover:text-blue-600 ${isActive ? "text-blue-600" : "text-slate-600"}`}>
                 {link.name}
-              </a>
+              </NavLink>
             ))}
+
+            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-lg text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
+              🛒
+              {itemCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-black text-white">{itemCount}</span>}
+            </Link>
 
             {/* Get Quote */}
             <a
@@ -94,14 +104,17 @@ export default function Navbar() {
           <nav className="border-t border-slate-100 py-5 md:hidden">
             <div className="flex flex-col gap-1">
               {links.map((link) => (
-                <a
+                <NavLink
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
+                  end={link.href === "/"}
                   onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3.5 font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-600">
+                  className={({ isActive }) => `rounded-xl px-4 py-3.5 font-semibold transition hover:bg-slate-50 hover:text-blue-600 ${isActive ? "bg-slate-50 text-blue-600" : "text-slate-700"}`}>
                   {link.name}
-                </a>
+                </NavLink>
               ))}
+
+              <Link to="/store/cart" onClick={() => setOpen(false)} className="flex items-center justify-between rounded-xl px-4 py-3.5 font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-blue-600">Cart <span className="rounded-full bg-slate-950 px-2 py-0.5 text-xs text-white">{itemCount}</span></Link>
 
               {/* Mobile CTA */}
               <a

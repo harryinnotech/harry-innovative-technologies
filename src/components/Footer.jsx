@@ -68,6 +68,9 @@ export default function Footer() {
               <a href="/projects" className="hover:text-white">
                 Projects
               </a>
+              <a href="/store" className="hover:text-white">
+                Store
+              </a>
               <a href="/contact" className="hover:text-white">
                 Contact
               </a>
