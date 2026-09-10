@@ -29,6 +29,11 @@ main.bg-slate-50.pt-32 {
   animation: floating 5s ease-in-out infinite;
 }
 
+.cart-added {
+  animation: cart-added 0.45s ease-out;
+  background-color: #15803d;
+}
+
 @media (min-width: 520px) and (max-width: 767px) {
   .grid:has(> article) {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -44,5 +49,19 @@ main.bg-slate-50.pt-32 {
 
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes cart-added {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
