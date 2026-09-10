@@ -21,6 +21,10 @@
   pointer-events: none;
 }
 
+main.bg-slate-50.pt-32 {
+  padding-top: 10px;
+}
+
 .float-animation {
   animation: floating 5s ease-in-out infinite;
 }
