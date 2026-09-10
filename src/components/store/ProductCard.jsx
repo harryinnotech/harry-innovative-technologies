@@ -17,7 +17,7 @@ export default function ProductCard({ product }) {
         <div className="min-w-0">
           <div className="sm:flex sm:items-start sm:justify-between sm:gap-4">
             <h2 className="break-words text-sm font-black tracking-tight text-slate-950 sm:text-xl">{product.name}</h2>
-            <span className="mt-1 block break-words text-xs font-black text-blue-700 sm:mt-0 sm:shrink-0 sm:text-right sm:text-lg">{product.priceLabel || formatPrice(product.price)}</span>
+            {!product.quoteRequired && <span className="mt-1 block break-words text-xs font-black text-blue-700 sm:mt-0 sm:shrink-0 sm:text-right sm:text-lg">{product.priceLabel || formatPrice(product.price)}</span>}
           </div>
         </div>
         <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-600 sm:mt-3 sm:text-sm sm:leading-6 sm:line-clamp-none">{product.description}</p>
