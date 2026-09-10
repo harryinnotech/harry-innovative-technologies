@@ -36,7 +36,7 @@ export default function ProductDetails() {
   const handleAdd = () => { addToCart(product, quantity); navigate("/store/checkout"); };
   const displayPrice = product.priceLabel || (product.price ? formatPrice(product.price) : "Request a Quote");
 
-  return <main className="bg-slate-50 pb-24 pt-32 text-slate-950"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  return <main className="bg-slate-50 pb-24 text-slate-950"><div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <Link to="/store" className="text-sm font-bold text-blue-600 hover:text-blue-800">← Back to store</Link>
     <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start">
       <Gallery product={product} />

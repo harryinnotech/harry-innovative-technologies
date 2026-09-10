@@ -27,14 +27,29 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl md:fixed md:left-0 md:right-0">
+    <header onClick={() => { if (open) setOpen(false); }} className="sticky top-0 z-[70] border-b border-slate-200/60 bg-white/90 md:backdrop-blur-xl md:fixed md:left-0 md:right-0">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-20 items-center justify-between gap-2">
-          {/* LOGO + COMPANY NAME */}
-          <Link
-            to="/"
-            className="flex min-w-0 items-center gap-2.5 sm:gap-3"
-            onClick={() => setOpen(false)}>
+        <div className="relative z-[75] flex min-h-16 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+            {/* MOBILE MENU BUTTON */}
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="order-first flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600 md:hidden">
+              <div className="flex flex-col gap-1.5">
+                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
+                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
+                <span className="block h-0.5 w-3.5 self-end rounded-full bg-blue-600" />
+              </div>
+            </button>
+
+            {/* LOGO + COMPANY NAME */}
+            <Link
+              to="/"
+              className="flex min-w-0 items-center gap-2.5 sm:gap-3"
+              onClick={() => setOpen(false)}>
             {/* Logo */}
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-950 sm:h-11 sm:w-11">
               <img
@@ -60,7 +75,8 @@ export default function Navbar() {
   Technologies
 </p>
             </div>
-          </Link>
+            </Link>
+          </div>
 
           {/* DESKTOP NAVIGATION */}
           <nav className="hidden items-center gap-7 md:flex">
@@ -94,29 +110,20 @@ export default function Navbar() {
             </a>
           </nav>
 
-          {/* MOBILE MENU BUTTON */}
-          <button
-            type="button"
-            onClick={() => setOpen(!open)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600 md:hidden">
-            {open ? (
-              <span className="text-2xl font-light leading-none">×</span>
-            ) : (
-              <div className="flex flex-col gap-1.5">
-                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
-                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
-                <span className="block h-0.5 w-3.5 self-end rounded-full bg-blue-600" />
-              </div>
-            )}
-          </button>
+          <div className="flex shrink-0 items-center gap-2 md:hidden">
+            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600">
+              <span aria-hidden="true">&#128722;</span>
+              {itemCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-black text-white">{itemCount}</span>}
+            </Link>
+          </div>
         </div>
 
         {/* MOBILE NAVIGATION */}
         {open && (
-          <nav className="max-h-[calc(100vh-5rem)] overflow-y-auto border-t border-slate-100 bg-white py-5 shadow-lg md:hidden">
-            <div className="flex flex-col gap-1">
+          <>
+              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-x-0 bottom-0 top-20 z-[55] bg-slate-950/30 md:hidden" />
+            <nav className="fixed bottom-0 left-0 top-16 z-[60] w-[min(22rem,85vw)] overflow-y-auto border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden">
+              <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
                 <input id="mobile-navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm outline-none" />
@@ -142,8 +149,9 @@ export default function Navbar() {
                 className="mt-3 rounded-xl bg-gradient-to-r from-green-600 to-blue-600 px-5 py-3.5 text-center font-bold text-white shadow-lg shadow-blue-500/15 transition hover:shadow-xl">
                 Get a Quote
               </a>
-            </div>
-          </nav>
+              </div>
+            </nav>
+          </>
         )}
       </div>
     </header>

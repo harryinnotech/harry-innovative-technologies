@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <main className="pt-20">
+    <main>
 
       <section className="relative overflow-hidden bg-slate-950 py-28 text-white">
 

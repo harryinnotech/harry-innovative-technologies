@@ -40,45 +40,47 @@ function ListSection({ title, items }) {
 
 export default function ProductInformationSections({ product }) {
   return (
-    <div className="mt-16 grid gap-6 lg:grid-cols-2">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-2">
+    <div className="mt-16">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h2 className="text-2xl font-black tracking-tight text-slate-950">Product description</h2>
         <p className="mt-5 max-w-4xl leading-8 text-slate-600">{product.fullDescription || product.description}</p>
       </section>
 
-      <ListSection title="Key features" items={product.features} />
-      <SpecificationTable title="Technical specifications" values={product.specifications} />
-      <SpecificationTable title="Electrical specifications" values={product.electricalSpecifications} />
-      <SpecificationTable title="Performance specifications" values={product.performanceSpecifications} />
-      <SpecificationTable title="Physical specifications" values={product.physicalSpecifications} />
-      <ListSection title="Compatibility" items={product.compatibility} />
-      <ListSection title="Installation information" items={product.installationInformation} />
-      <ListSection title="Installer information" items={product.installerInformation} />
-      <ListSection title="What's included" items={product.includedInBox} />
-      <ListSection title="Recommended / required accessories" items={product.recommendedAccessories} />
-      <ListSection title="Safety information" items={product.safetyInformation} />
-      <ListSection title="Maintenance & care" items={product.maintenanceInformation} />
+      <div className="mt-6 columns-1 gap-6 lg:columns-2">
+        <div className="mb-6 break-inside-avoid"><ListSection title="Key features" items={product.features} /></div>
+        <div className="mb-6 break-inside-avoid"><SpecificationTable title="Technical specifications" values={product.specifications} /></div>
+        <div className="mb-6 break-inside-avoid"><SpecificationTable title="Electrical specifications" values={product.electricalSpecifications} /></div>
+        <div className="mb-6 break-inside-avoid"><SpecificationTable title="Performance specifications" values={product.performanceSpecifications} /></div>
+        <div className="mb-6 break-inside-avoid"><SpecificationTable title="Physical specifications" values={product.physicalSpecifications} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Compatibility" items={product.compatibility} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Installation information" items={product.installationInformation} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Installer information" items={product.installerInformation} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="What's included" items={product.includedInBox} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Recommended / required accessories" items={product.recommendedAccessories} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Safety information" items={product.safetyInformation} /></div>
+        <div className="mb-6 break-inside-avoid"><ListSection title="Maintenance & care" items={product.maintenanceInformation} /></div>
 
-      {product.warranty?.duration || product.warranty?.information ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-2xl font-black tracking-tight text-slate-950">Warranty</h2>
-          {product.warranty.duration && <p className="mt-5 text-sm font-bold text-slate-900">{product.warranty.duration}</p>}
-          {product.warranty.information && <p className="mt-2 text-sm leading-6 text-slate-600">{product.warranty.information}</p>}
-        </section>
-      ) : null}
+        {product.warranty?.duration || product.warranty?.information ? (
+          <div className="mb-6 break-inside-avoid"><section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">Warranty</h2>
+            {product.warranty.duration && <p className="mt-5 text-sm font-bold text-slate-900">{product.warranty.duration}</p>}
+            {product.warranty.information && <p className="mt-2 text-sm leading-6 text-slate-600">{product.warranty.information}</p>}
+          </section></div>
+        ) : null}
 
-      {product.certifications?.length ? <ListSection title="Certifications" items={product.certifications} /> : null}
+        {product.certifications?.length ? <div className="mb-6 break-inside-avoid"><ListSection title="Certifications" items={product.certifications} /></div> : null}
 
-      {product.downloads?.length ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <h2 className="text-2xl font-black tracking-tight text-slate-950">Downloads</h2>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {product.downloads.map((download) => <a key={download.label || download.name} href={download.url} target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-blue-700 hover:border-blue-300">{download.label || download.name}</a>)}
-          </div>
-        </section>
-      ) : null}
+        {product.downloads?.length ? (
+          <div className="mb-6 break-inside-avoid"><section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">Downloads</h2>
+            <div className="mt-5 flex flex-wrap gap-3">
+              {product.downloads.map((download) => <a key={download.label || download.name} href={download.url} target="_blank" rel="noreferrer" className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-blue-700 hover:border-blue-300">{download.label || download.name}</a>)}
+            </div>
+          </section></div>
+        ) : null}
 
-      {product.notes?.length ? <ListSection title="Important notes" items={product.notes} /> : null}
+        {product.notes?.length ? <div className="mb-6 break-inside-avoid"><ListSection title="Important notes" items={product.notes} /></div> : null}
+      </div>
     </div>
   );
 }

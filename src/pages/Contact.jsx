@@ -2,7 +2,7 @@ import SocialLinks from "../components/SocialLinks";
 
 export default function Contact() {
   return (
-    <main className="pt-20">
+    <main>
       {/* ======================================================
           HERO
       ======================================================= */}

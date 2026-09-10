@@ -4,7 +4,7 @@ import { formatPrice } from "../../utils/formatPrice";
 export function buildWhatsAppMessage({ customer, items, total }) {
   const products = items.filter((item) => !item.quoteRequired);
   const services = items.filter((item) => item.quoteRequired);
-  const productLines = products.map((item, index) => `${index + 1} × ${item.name} | Brand: ${item.brand || "Contact us to confirm"} | Model: ${item.model || "Contact us to confirm"} — ${formatPrice(item.price * item.quantity)}`);
+  const productLines = products.map((item, index) => `${index + 1}. ${item.name} | Quantity: ${item.quantity} | Brand: ${item.brand || "Contact us to confirm"} | Model: ${item.model || "Contact us to confirm"} — ${formatPrice(item.price * item.quantity)}`);
   const serviceLines = services.map((item) => `${item.quantity} × ${item.name} — Request a Quote`);
   return [
     "Hello, I would like to make an enquiry/order from HarryInnoTech.",
