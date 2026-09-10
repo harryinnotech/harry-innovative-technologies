@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { itemCount } = useCart();
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   const links = [
     { name: "Home", href: "/" },
@@ -17,8 +19,15 @@ export default function Navbar() {
     { name: "About", href: "/about" },
   ];
 
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const value = search.trim();
+    navigate(value ? `/store?search=${encodeURIComponent(value)}` : "/store");
+    setOpen(false);
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl md:fixed md:left-0 md:right-0">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-20 items-center justify-between gap-2">
           {/* LOGO + COMPANY NAME */}
@@ -55,6 +64,11 @@ export default function Navbar() {
 
           {/* DESKTOP NAVIGATION */}
           <nav className="hidden items-center gap-7 md:flex">
+            <form onSubmit={submitSearch} className="flex min-w-0 items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
+              <label htmlFor="navbar-search" className="sr-only">Search products</label>
+              <input id="navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search" className="w-24 min-w-0 bg-transparent px-3 py-2 text-sm outline-none lg:w-32" />
+              <button type="submit" aria-label="Search products" className="px-3 py-2 text-sm font-bold text-blue-700 hover:text-blue-900">⌕</button>
+            </form>
             {links.map((link) => (
               <NavLink
                 key={link.name}
@@ -101,8 +115,13 @@ export default function Navbar() {
 
         {/* MOBILE NAVIGATION */}
         {open && (
-          <nav className="border-t border-slate-100 py-5 md:hidden">
+          <nav className="max-h-[calc(100vh-5rem)] overflow-y-auto border-t border-slate-100 bg-white py-5 shadow-lg md:hidden">
             <div className="flex flex-col gap-1">
+              <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
+                <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
+                <input id="mobile-navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm outline-none" />
+                <button type="submit" className="px-4 py-3 text-sm font-bold text-blue-700">Search</button>
+              </form>
               {links.map((link) => (
                 <NavLink
                   key={link.name}
