@@ -134,7 +134,7 @@ export default function Navbar() {
         {open && createPortal(
           <>
               <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 backdrop-blur-sm md:hidden" />
-            <nav ref={navRef} className="fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-sm overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden">
+            <nav ref={navRef} className="fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-xs overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden">
               <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
