@@ -97,9 +97,9 @@ export function MobileFilterDrawer({ open, onClose, ...props }) {
   return (
     <div className="fixed inset-0 z-[80] lg:hidden" role="dialog" aria-modal="true" aria-label="Filter results">
       <button type="button" aria-label="Close filters" onClick={onClose} className="absolute inset-0 bg-slate-950/40" />
-      <section className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:left-1/2 sm:right-auto sm:top-0 sm:w-[min(28rem,100vw)] sm:max-h-none sm:translate-x-[-50%] sm:rounded-none">
-        <div className="mb-5 flex items-center justify-between border-b border-slate-200 pb-4"><h2 className="text-lg font-black text-slate-950">Filter results</h2><button ref={closeButtonRef} type="button" onClick={onClose} className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Close</button></div>
-        <FilterPanel {...props} filters={draft} onToggle={toggleDraft} onPriceChange={changeDraftPrice} onClear={clearDraft} resultCount={previewCount} onApply={() => { props.onApply(draft); onClose(); }} closeLabel={`Show ${previewCount} results`} />
+      <section className="absolute inset-x-0 bottom-0 max-h-[calc(90vh-50px)] overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:left-1/2 sm:right-auto sm:top-0 sm:w-[min(28rem,100vw)] sm:max-h-none sm:translate-x-[-50%] sm:rounded-none">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 pb-4 pt-5"><h2 className="text-lg font-black text-slate-950">Filter results</h2><button ref={closeButtonRef} type="button" onClick={onClose} className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Close</button></div>
+        <div className="p-5"><FilterPanel {...props} filters={draft} onToggle={toggleDraft} onPriceChange={changeDraftPrice} onClear={clearDraft} resultCount={previewCount} onApply={() => { props.onApply(draft); onClose(); }} closeLabel={`Show ${previewCount} results`} /></div>
       </section>
     </div>
   );
