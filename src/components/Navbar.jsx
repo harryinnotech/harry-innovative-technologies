@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { useCart } from "../context/CartContext";
@@ -49,7 +49,7 @@ export default function Navbar() {
               data-mobile-menu-toggle
               onPointerDown={(event) => {
                 event.preventDefault();
-                setOpen((value) => !value);
+                flushSync(() => setOpen((value) => !value));
               }}
               onClick={(event) => {
                 if (event.detail === 0) setOpen((value) => !value);
