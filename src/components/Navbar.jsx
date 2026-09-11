@@ -134,8 +134,8 @@ export default function Navbar() {
         {/* MOBILE NAVIGATION */}
         {createPortal(
           <>
-              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} aria-hidden={!open} className={`fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 backdrop-blur-0 sm:backdrop-blur-[2px] md:hidden ${open ? "opacity-100" : "pointer-events-none invisible opacity-0"}`} />
-            <nav ref={navRef} aria-hidden={!open} className={`fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-xs overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl transition-opacity duration-75 md:hidden ${open ? "opacity-100" : "pointer-events-none invisible opacity-0"}`}>
+              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} aria-hidden={!open} className={`fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 md:hidden ${open ? "" : "pointer-events-none invisible"}`} />
+            <nav ref={navRef} aria-hidden={!open} className={`fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-xs overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden ${open ? "" : "pointer-events-none invisible"}`}>
               <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
