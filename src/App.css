@@ -34,6 +34,16 @@ main.bg-slate-50.pt-32 {
   background-color: #15803d;
 }
 
+@media (max-width: 767px) {
+  .performance-light-page [class*="blur-"] {
+    filter: none !important;
+  }
+
+  .performance-light-page .animate-ping {
+    animation: none !important;
+  }
+}
+
 @media (min-width: 520px) and (max-width: 767px) {
   .grid:has(> article) {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;

@@ -175,7 +175,7 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <main className="overflow-hidden bg-white text-slate-950">
+    <main className="performance-light-page overflow-hidden bg-white text-slate-950">
 
       {/* =========================================================
           HERO

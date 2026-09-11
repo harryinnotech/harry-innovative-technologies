@@ -144,7 +144,7 @@ const principles = [
 
 export default function Services() {
   return (
-    <main>
+    <main className="performance-light-page">
       {/* =========================================================
           HERO SECTION
           ========================================================= */}
