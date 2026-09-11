@@ -47,7 +47,13 @@ export default function Navbar() {
             <button
               type="button"
               data-mobile-menu-toggle
-              onClick={() => setOpen(!open)}
+              onPointerDown={(event) => {
+                event.preventDefault();
+                setOpen((value) => !value);
+              }}
+              onClick={(event) => {
+                if (event.detail === 0) setOpen((value) => !value);
+              }}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               className="order-first flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600 md:hidden">
