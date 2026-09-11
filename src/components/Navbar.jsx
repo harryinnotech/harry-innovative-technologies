@@ -31,7 +31,7 @@ export default function Navbar() {
   useEffect(() => {
     if (!open) return undefined;
     const closeOnOutsidePointer = (event) => {
-      if (navRef.current?.contains(event.target) || event.target.closest("button[aria-label='Open menu'], button[aria-label='Close menu']")) return;
+      if (navRef.current?.contains(event.target) || event.target.closest("button[aria-label='Open menu'], button[aria-label='Close menu'], button[data-mobile-menu-toggle]")) return;
       setOpen(false);
     };
     document.addEventListener("pointerdown", closeOnOutsidePointer);
@@ -46,6 +46,7 @@ export default function Navbar() {
             {/* MOBILE MENU BUTTON */}
             <button
               type="button"
+              data-mobile-menu-toggle
               onClick={() => setOpen(!open)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
