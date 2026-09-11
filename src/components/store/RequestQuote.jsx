@@ -15,7 +15,7 @@ function validate(form, listingType, quantity) {
 }
 
 function Field({ label, name, value, onChange, error, required = false, type = "text", placeholder, compact = false, ...props }) {
-  return <label className="block text-sm font-bold text-slate-800"><span>{label}{required && <span className="text-red-600"> *</span>}</span><input {...props} name={name} type={type} value={value} onChange={onChange} placeholder={placeholder} aria-invalid={Boolean(error)} aria-describedby={error ? `${name}-error` : undefined} className={`mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-normal outline-none transition focus:border-blue-500 focus:bg-white ${compact ? "h-10 py-2 text-sm" : "py-3"}`} />{error && <span id={`${name}-error`} className="mt-1 block text-xs font-semibold text-red-600">{error}</span>}</label>;
+  return <label className="block text-sm font-bold text-slate-800"><span>{label}{required && <span className="text-red-600"> *</span>}</span><input {...props} name={name} type={type} value={value} onChange={onChange} placeholder={placeholder} aria-invalid={Boolean(error)} aria-describedby={error ? `${name}-error` : undefined} className={`mt-2 border border-slate-200 bg-slate-50 font-normal outline-none transition focus:border-blue-500 focus:bg-white ${compact ? `h-10 rounded-lg px-2 py-2 text-sm ${type === "time" ? "w-[7.5rem]" : "w-[10rem]"}` : "w-full rounded-xl px-4 py-3"}`} />{error && <span id={`${name}-error`} className="mt-1 block text-xs font-semibold text-red-600">{error}</span>}</label>;
 }
 
 function ListingSummary({ listing, listingType }) {
