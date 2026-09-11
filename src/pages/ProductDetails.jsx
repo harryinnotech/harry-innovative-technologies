@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProductInformationSections from "../components/store/ProductInformationSections";
 import RelatedProducts from "../components/store/RelatedProducts";
+import { RequestQuoteButton } from "../components/store/RequestQuote";
 import { useCart } from "../context/CartContext";
 import { getProductById, getProducts } from "../services/productService";
 import { formatPrice } from "../utils/formatPrice";
@@ -50,7 +51,7 @@ export default function ProductDetails() {
         <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-600"><span>{product.brand || "Brand: Contact us to confirm"}</span><span>·</span><span>{product.model || "Model: Contact us to confirm"}</span></div>
         <p className="mt-6 text-lg leading-8 text-slate-600">{product.shortDescription || product.description}</p>
         <div className="mt-8 flex flex-wrap items-center gap-4"><span className="text-3xl font-black text-blue-700">{displayPrice}</span><span className="inline-flex items-center gap-2 text-sm font-bold text-green-700"><span className="h-2.5 w-2.5 rounded-full bg-green-500" /> Available</span></div>
-        <div className="mt-8 flex items-center gap-3"><div className="flex shrink-0 items-center rounded-xl border border-slate-200"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="h-12 w-12 text-xl hover:bg-slate-50">−</button><span className="w-10 text-center font-bold">{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} className="h-12 w-12 text-xl hover:bg-slate-50">+</button></div><button type="button" onClick={handleAdd} className={`min-w-0 flex-1 break-words rounded-xl bg-gradient-to-r from-green-600 to-blue-600 px-6 py-3 font-bold text-white shadow-lg shadow-blue-500/15 transition hover:-translate-y-0.5 ${added ? "cart-added" : ""}`}>{added ? "Added to cart" : product.quoteRequired ? "Request a quote" : "Add to cart"}</button></div>
+        <div className="mt-8 flex items-center gap-3">{product.quoteRequired ? <RequestQuoteButton listing={product} listingType={product.type} quantity={quantity} className="min-w-0 flex-1 bg-gradient-to-r from-green-600 to-blue-600 shadow-lg shadow-blue-500/15" /> : <><div className="flex shrink-0 items-center rounded-xl border border-slate-200"><button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="h-12 w-12 text-xl hover:bg-slate-50">−</button><span className="w-10 text-center font-bold">{quantity}</span><button type="button" onClick={() => setQuantity(quantity + 1)} className="h-12 w-12 text-xl hover:bg-slate-50">+</button></div><button type="button" onClick={handleAdd} className={`min-w-0 flex-1 break-words rounded-xl bg-gradient-to-r from-green-600 to-blue-600 px-6 py-3 font-bold text-white shadow-lg shadow-blue-500/15 transition hover:-translate-y-0.5 ${added ? "cart-added" : ""}`}>{added ? "Added to cart" : "Add to cart"}</button></>}</div>
         <p className="mt-5 text-xs text-slate-500">Image source: {product.imageSource || "Contact us to confirm"}</p>
       </section>
     </div>
