@@ -39,7 +39,7 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header onClick={() => { if (open) setOpen(false); }} className="sticky top-0 z-[70] rounded-b-2xl border-b border-slate-200/60 bg-white/80 backdrop-blur-sm md:fixed md:left-0 md:right-0 md:rounded-2xl">
+    <header className="sticky top-0 z-[70] rounded-b-2xl border-b border-slate-200/60 bg-white/80 backdrop-blur-sm md:fixed md:left-0 md:right-0 md:rounded-2xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative z-[75] flex min-h-16 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
