@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const navRef = useRef(null);
   const { itemCount } = useCart();
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -25,6 +27,16 @@ export default function Navbar() {
     navigate(value ? `/store?search=${encodeURIComponent(value)}` : "/store");
     setOpen(false);
   };
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOnOutsidePointer = (event) => {
+      if (navRef.current?.contains(event.target) || event.target.closest("button[aria-label='Open menu'], button[aria-label='Close menu']")) return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [open]);
 
   return (
     <header onClick={() => { if (open) setOpen(false); }} className="sticky top-0 z-[70] rounded-b-2xl border-b border-slate-200/60 bg-white/80 backdrop-blur-sm md:fixed md:left-0 md:right-0 md:rounded-2xl">
@@ -119,10 +131,10 @@ export default function Navbar() {
         </div>
 
         {/* MOBILE NAVIGATION */}
-        {open && (
+        {open && createPortal(
           <>
-              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 md:hidden" />
-            <nav className="fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-sm overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden">
+              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 backdrop-blur-sm md:hidden" />
+            <nav ref={navRef} className="fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-sm overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden">
               <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
@@ -151,7 +163,8 @@ export default function Navbar() {
               </a>
               </div>
             </nav>
-          </>
+          </>,
+          document.body,
         )}
       </div>
     </header>
