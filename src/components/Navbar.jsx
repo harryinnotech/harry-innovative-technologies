@@ -101,7 +101,7 @@ export default function Navbar() {
           <nav className="hidden items-center gap-7 md:flex">
             <form onSubmit={submitSearch} className="flex min-w-0 items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
               <label htmlFor="navbar-search" className="sr-only">Search products</label>
-              <input id="navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search" className="w-24 min-w-0 bg-transparent px-3 py-2 text-sm outline-none lg:w-32" />
+              <input id="navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search" className="w-24 min-w-0 bg-transparent px-3 py-2 text-sm font-medium text-slate-800 outline-none placeholder:text-slate-500 lg:w-32" />
               <button type="submit" aria-label="Search products" className="px-3 py-2 text-sm font-bold text-blue-700 hover:text-blue-900">⌕</button>
             </form>
             {links.map((link) => (
@@ -109,7 +109,7 @@ export default function Navbar() {
                 key={link.name}
                 to={link.href}
                 end={link.href === "/"}
-                className={({ isActive }) => `relative text-sm font-semibold transition duration-200 hover:text-blue-600 ${isActive ? "text-blue-600" : "text-slate-600"}`}>
+                className={({ isActive }) => `relative text-[15px] font-bold tracking-[-0.01em] transition duration-200 hover:text-blue-700 ${isActive ? "text-blue-700" : "text-slate-700"}`}>
                 {link.name}
               </NavLink>
             ))}
@@ -145,7 +145,7 @@ export default function Navbar() {
               <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>
-                <input id="mobile-navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm outline-none" />
+                <input id="mobile-navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products" className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm font-medium text-slate-800 outline-none placeholder:text-slate-500" />
                 <button type="submit" className="px-4 py-3 text-sm font-bold text-blue-700">Search</button>
               </form>
               {links.map((link) => (
@@ -154,7 +154,7 @@ export default function Navbar() {
                   to={link.href}
                   end={link.href === "/"}
                   onClick={() => setOpen(false)}
-                  className={({ isActive }) => `rounded-xl px-4 py-3.5 font-semibold transition hover:bg-slate-50 hover:text-blue-600 ${isActive ? "bg-slate-50 text-blue-600" : "text-slate-700"}`}>
+                  className={({ isActive }) => `rounded-xl px-4 py-3.5 text-base font-bold tracking-[-0.01em] transition hover:bg-slate-50 hover:text-blue-700 ${isActive ? "bg-slate-50 text-blue-700" : "text-slate-800"}`}>
                   {link.name}
                 </NavLink>
               ))}

@@ -182,7 +182,7 @@ export default function Home() {
           Replace the image URL below with your own company/project
           image when you have one.
       ========================================================== */}
-      <section className="relative min-h-[92vh] overflow-hidden bg-slate-950">
+      <section className="relative min-h-[80svh] overflow-hidden bg-slate-950">
 
         <div className="absolute inset-0">
           {/* STOCK IMAGE — Replace with your own hero/project photo */}
@@ -211,7 +211,7 @@ export default function Home() {
           }}
         />
 
-        <div className="relative mx-auto flex min-h-[92vh] max-w-7xl items-center px-6 pb-20 pt-32 lg:px-8">
+        <div className="relative mx-auto flex min-h-[80svh] max-w-7xl items-center px-6 pb-20 pt-32 lg:px-8">
 
           <div className="max-w-6xl">
 
@@ -222,7 +222,7 @@ export default function Home() {
                 <span className="relative h-2.5 w-2.5 rounded-full bg-gradient-to-r from-green-400 to-blue-500" />
               </span>
 
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-300 sm:text-xs">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-200 sm:text-xs">
                 Technology • Energy • Security
               </span>
             </div>
@@ -235,7 +235,7 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="mt-8 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8 lg:text-xl">
+            <p className="mt-8 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg sm:leading-8 lg:text-xl">
               Harry Innovative Technologies builds practical solutions across
               digital technology, solar energy, electrical systems, security,
               electronics and automation.

@@ -160,19 +160,19 @@ export default function Services() {
             <div className="mb-8 flex items-center gap-3">
               <span className="h-px w-10 bg-gradient-to-r from-green-500 to-blue-500" />
 
-              <p className="text-sm font-bold uppercase tracking-[0.28em] text-slate-400">
+              <p className="text-sm font-bold uppercase tracking-[0.28em] text-slate-200">
                 Our Services
               </p>
             </div>
 
             <h1 className="text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl lg:text-8xl">
               Solutions built
-              <span className="block text-slate-500">
+              <span className="block text-slate-300">
                 around your needs.
               </span>
             </h1>
 
-            <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-400 sm:text-xl">
+            <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl">
               From digital experiences and solar systems to electrical
               installations, security and automation — we combine technology
               and practical engineering to solve real problems.
@@ -202,22 +202,22 @@ export default function Services() {
           <div className="mt-20 grid max-w-4xl grid-cols-2 gap-8 border-t border-white/10 pt-8 sm:grid-cols-4">
             <div>
               <p className="text-3xl font-extrabold">07</p>
-              <p className="mt-1 text-sm text-slate-500">Core services</p>
+              <p className="mt-1 text-sm text-slate-300">Core services</p>
             </div>
 
             <div>
               <p className="text-3xl font-extrabold">01</p>
-              <p className="mt-1 text-sm text-slate-500">Technology partner</p>
+              <p className="mt-1 text-sm text-slate-300">Technology partner</p>
             </div>
 
             <div>
               <p className="text-3xl font-extrabold">∞</p>
-              <p className="mt-1 text-sm text-slate-500">Possibilities</p>
+              <p className="mt-1 text-sm text-slate-300">Possibilities</p>
             </div>
 
             <div>
               <p className="text-3xl font-extrabold">100%</p>
-              <p className="mt-1 text-sm text-slate-500">Commitment</p>
+              <p className="mt-1 text-sm text-slate-300">Commitment</p>
             </div>
           </div>
         </div>
