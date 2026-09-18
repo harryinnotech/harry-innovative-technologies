@@ -211,7 +211,7 @@ export default function Home() {
           }}
         />
 
-        <div className="relative mx-auto flex min-h-[80svh] max-w-7xl items-center px-6 pb-20 pt-32 lg:px-8">
+        <div className="relative mx-auto flex min-h-[80svh] max-w-7xl items-center px-6 pb-20 pt-12 lg:px-8 lg:pt-32">
 
           <div className="max-w-6xl">
 

@@ -15,6 +15,11 @@
   color-scheme: light;
 }
 
+:root.dark {
+  color-scheme: dark;
+  background: #0f0f0f;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -31,6 +36,64 @@ body {
   font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.01em;
+}
+
+:root.dark body {
+  background: #0f0f0f;
+  color: #f1f1f1;
+}
+
+:root:not(.dark) header {
+  background-color: rgb(255 255 255 / 0.8) !important;
+  border-color: rgb(226 232 240 / 0.6) !important;
+}
+
+:root:not(.dark) [data-mobile-menu-toggle] span {
+  background-color: #030712 !important;
+}
+
+:root.dark .bg-white {
+  background-color: #212121 !important;
+}
+
+:root.dark .bg-slate-50 {
+  background-color: #181818 !important;
+}
+
+:root.dark .text-slate-950,
+:root.dark .text-slate-900,
+:root.dark .text-slate-800,
+:root.dark .text-slate-700 {
+  color: #f1f1f1 !important;
+}
+
+:root.dark .text-slate-600,
+:root.dark .text-slate-500 {
+  color: #aaaaaa !important;
+}
+
+:root.dark .border-slate-200 {
+  border-color: #3f3f3f !important;
+}
+
+:root.dark .hover\:text-blue-700:hover,
+:root.dark .text-blue-700,
+:root.dark .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+:root.dark .hover\:border-blue-300:hover,
+:root.dark .focus-within\:border-blue-400:focus-within {
+  border-color: #3b82f6 !important;
+}
+
+:root.dark .bg-green-600 {
+  background-color: #16a34a !important;
+}
+
+:root.dark .bg-slate-950 .bg-white {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
 }
 
 button,

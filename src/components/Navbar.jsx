@@ -4,7 +4,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.webp";
 import { useCart } from "../context/CartContext";
 
-export default function Navbar() {
+export default function Navbar({ darkMode, onToggleTheme }) {
   const [open, setOpen] = useState(false);
   const navRef = useRef(null);
   const { itemCount } = useCart();
@@ -39,8 +39,8 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-[70] rounded-b-2xl border-b border-slate-200/60 bg-white/80 backdrop-blur-sm md:fixed md:left-0 md:right-0 md:rounded-2xl">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-[70] w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-sm dark:border-[#3f3f3f] dark:bg-[#212121]/90 md:fixed md:left-0 md:right-0">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="relative z-[75] flex min-h-16 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
             {/* MOBILE MENU BUTTON */}
@@ -56,11 +56,11 @@ export default function Navbar() {
               }}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="order-first flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600 md:hidden">
+              className="order-first flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600 lg:hidden">
               <div className="flex flex-col gap-1.5">
-                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
-                <span className="block h-0.5 w-5 rounded-full bg-slate-900" />
-                <span className="block h-0.5 w-3.5 self-end rounded-full bg-blue-600" />
+                <span className="block h-0.5 w-5 rounded-full bg-gray-950 dark:bg-gray-300" />
+                <span className="block h-0.5 w-5 rounded-full bg-gray-950 dark:bg-gray-300" />
+                <span className="block h-0.5 w-3.5 self-end rounded-full bg-gray-950 dark:bg-gray-300" />
               </div>
             </button>
 
@@ -98,7 +98,7 @@ export default function Navbar() {
           </div>
 
           {/* DESKTOP NAVIGATION */}
-          <nav className="hidden items-center gap-7 md:flex">
+          <nav className="hidden items-center gap-3 lg:flex lg:gap-6">
             <form onSubmit={submitSearch} className="flex min-w-0 items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
               <label htmlFor="navbar-search" className="sr-only">Search products</label>
               <input id="navbar-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search" className="w-24 min-w-0 bg-transparent px-3 py-2 text-sm font-medium text-slate-800 outline-none placeholder:text-slate-500 lg:w-32" />
@@ -114,10 +114,14 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-lg text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
+            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-xl leading-none text-blue-700 transition hover:border-blue-300 hover:text-blue-600 dark:border-[#3f3f3f] dark:text-blue-400 dark:hover:border-blue-500 dark:hover:text-blue-300">
               🛒
               {itemCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-black text-white">{itemCount}</span>}
             </Link>
+
+            <button type="button" onClick={onToggleTheme} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-xl leading-none text-green-700 transition hover:border-green-300 hover:text-green-600 dark:border-[#3f3f3f] dark:text-green-400 dark:hover:border-green-500 dark:hover:text-green-300">
+              {darkMode ? "☀" : "☾"}
+            </button>
 
             {/* Get Quote */}
             <a
@@ -129,8 +133,11 @@ export default function Navbar() {
             </a>
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2 md:hidden">
-            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600">
+          <div className="flex shrink-0 items-center gap-2 lg:hidden">
+            <button type="button" onClick={onToggleTheme} aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl leading-none text-green-700 shadow-sm transition hover:border-green-300 hover:text-green-600 dark:border-[#3f3f3f] dark:bg-[#212121] dark:text-green-400 dark:hover:border-green-500 dark:hover:text-green-300">
+              {darkMode ? "☀" : "☾"}
+            </button>
+            <Link to="/store/cart" aria-label={`Shopping cart with ${itemCount} items`} className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-xl leading-none font-bold text-slate-900 shadow-sm transition hover:border-blue-300 hover:text-blue-600">
               <span aria-hidden="true">&#128722;</span>
               {itemCount > 0 && <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-[10px] font-black text-white">{itemCount}</span>}
             </Link>
@@ -140,8 +147,8 @@ export default function Navbar() {
         {/* MOBILE NAVIGATION */}
         {createPortal(
           <>
-              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} aria-hidden={!open} className={`fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 md:hidden ${open ? "" : "pointer-events-none invisible"}`} />
-            <nav ref={navRef} aria-hidden={!open} className={`fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-xs overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl md:hidden ${open ? "" : "pointer-events-none invisible"}`}>
+              <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} aria-hidden={!open} className={`fixed inset-x-0 bottom-0 top-16 z-[65] bg-slate-950/30 lg:hidden ${open ? "" : "pointer-events-none invisible"}`} />
+            <nav ref={navRef} aria-hidden={!open} className={`fixed left-0 top-16 z-[80] h-[calc(100dvh-4rem)] w-full max-w-xs overflow-y-auto overscroll-contain border-r border-slate-200 bg-white px-5 pb-8 pt-5 shadow-2xl lg:hidden ${open ? "" : "pointer-events-none invisible"}`}>
               <div className="flex flex-col gap-1">
               <form onSubmit={submitSearch} className="mb-3 flex items-center rounded-xl border border-slate-200 bg-slate-50 focus-within:border-blue-400 focus-within:bg-white">
                 <label htmlFor="mobile-navbar-search" className="sr-only">Search products</label>

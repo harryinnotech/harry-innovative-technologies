@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 
@@ -19,13 +20,20 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 
 export default function App() {
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("hit-theme") === "dark");
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+    localStorage.setItem("hit-theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
+
   return (
     <BrowserRouter>
       <CartProvider>
         <SEO />
         <ScrollToTop />
 
-        <Navbar />
+        <Navbar darkMode={darkMode} onToggleTheme={() => setDarkMode((value) => !value)} />
 
         <Routes>
           <Route path="/" element={<Home />} />
